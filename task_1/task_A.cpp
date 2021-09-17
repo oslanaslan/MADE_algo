@@ -3,25 +3,23 @@
 using namespace std;
 
 int main() {
-    int N;
-    cin >> N;
-    long input_data[N];
+    int n;
+    cin >> n;
+    int input_data[n];
     
-    for (int i = 0; i < N; i++) {
+    for (int i = 0; i < n; i++) {
         cin >> input_data[i];
     }
 
-    for (int i = 0; i < N; i++) {
-        for (int j = i; j < N; j++) {
+    for (int i = 0; i < n; i++) {
+        for (int j = i; j < n; j++) {
             if (input_data[i] > input_data[j]) {
-                long temp = input_data[i];
-                input_data[i] = input_data[j];
-                input_data[j] = temp;
+                swap(input_data[i], input_data[j]);
             }
         }
     }
 
-    for (int i = 0; i < N; i++) {
+    for (int i = 0; i < n; i++) {
         cout << input_data[i] << " ";
     }
 

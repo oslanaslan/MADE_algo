@@ -3,14 +3,14 @@
 
 using namespace std;
 
-void inplace_quick_sort(long *data_vec, int start, int end) {
+void inplace_quick_sort(int *data_vec, int start, int end) {
     if (end - start <= 1)
         return;
 
     std::random_device rd;
     std::mt19937 gen(rd());
     uniform_int_distribution<> uniform_dist(start, end - 1);
-    long middle_element = data_vec[uniform_dist(gen)];
+    int middle_element = data_vec[uniform_dist(gen)];
     int current_ind = start;
     int left_border = start;
     int right_border = start;
@@ -27,7 +27,7 @@ void inplace_quick_sort(long *data_vec, int start, int end) {
 
     right_border = current_ind;
 
-    for (; current_ind < end; current_ind++) {
+    while (current_ind < end) {
         if (data_vec[current_ind] < middle_element) {
             swap(data_vec[right_border], data_vec[current_ind]);
             swap(data_vec[left_border], data_vec[right_border]);
@@ -40,6 +40,7 @@ void inplace_quick_sort(long *data_vec, int start, int end) {
                 right_border++;
             }
         }
+        current_ind++;
     }
 
     inplace_quick_sort(data_vec, start, left_border);
@@ -47,19 +48,19 @@ void inplace_quick_sort(long *data_vec, int start, int end) {
 }
 
 int main() {
-    int N;
-    long *data_vec;
+    int n;
+    int *data_vec;
 
-    cin >> N;
-    data_vec = new long[N];
+    cin >> n;
+    data_vec = new int[n];
 
-    for (int i = 0; i < N; i++) {
+    for (int i = 0; i < n; i++) {
         cin >> data_vec[i];
     }
 
-    inplace_quick_sort(data_vec, 0, N);
+    inplace_quick_sort(data_vec, 0, n);
 
-    for (int i = 0; i < N; i++) {
+    for (int i = 0; i < n; i++) {
         cout << data_vec[i] << " ";
     }
 
