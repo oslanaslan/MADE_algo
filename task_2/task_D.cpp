@@ -18,21 +18,52 @@ int main() {
     cin >> cards;
 
     for (int i = 0; i < m; i++) {
-        cards_count[input_string[i] - A]++;
+        cards_count[cards[i] - A]++;
     }
 
     int start = 0;
     int end = 0;
+    int count = 0;
 
-    while (end < n) {
-        if (start < end) {
-            if ()
+    while (start < n) {
+        if (end < n) {
+            char current_symbol = input_string[end] - A;
+
+            if (string_count[current_symbol] < cards_count[current_symbol]) {
+                string_count[current_symbol]++;
+                end++;
+                count++;
+            }
+            else {
+                char left_symbol = input_string[start] - A;
+
+                string_count[left_symbol] = string_count[left_symbol] > 0 ? string_count[left_symbol] - 1 : 0;
+                start++;
+                if (start > end) {
+                    end = start;
+                }
+                left_symbol = input_string[start] - A;
+                if (string_count[left_symbol] > 0 && string_count[left_symbol] <= cards_count[left_symbol]) {
+                    count += end - start;
+                }
+            }
         }
         else {
-            end++;
+            char left_symbol = input_string[start] - A;
+
+            string_count[left_symbol] = string_count[left_symbol] > 0 ? string_count[left_symbol] - 1 : 0;
+            start++;
+            if (start > end) {
+                end = start;
+            }
+            left_symbol = input_string[start] - A;
+            if (string_count[left_symbol] > 0 && string_count[left_symbol] <= cards_count[left_symbol]) {
+                count += end - start;
+            }
         }
     }
     
+    cout << count << endl;
 
     return 0;
 }
