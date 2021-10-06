@@ -46,7 +46,7 @@ int main() {
     for (int i = 0; i < k; i++) {
         pair<int, int> query = queries[i];
         int left_bound = lower_bound(input_data, n, query.first);
-        int right_bound = lower_bound(input_data, n, query.second +1);
+        int right_bound = lower_bound(input_data, n, query.second + 1);
 
         results[i] = right_bound - left_bound;
     }
