@@ -1,11 +1,13 @@
 #include <iostream>
+#include <utility>
 
 using namespace std;
 
+template<class Entity>
 class List {
 
     struct Node {
-        int value = 0;
+        Entity value = Entity();
         Node *next_node = nullptr;
     };
 
@@ -15,9 +17,9 @@ class List {
 
 public:
 
-    List(int size = 0, int value = 0) {
+    List(int size = 0) {
         for (int i = 0; i < size; i++) {
-            push_back(value);
+            push_back(Entity());
         }
     }
 
@@ -44,7 +46,7 @@ public:
         return current_node;
     }
 
-    void push_back(int value) {
+    void push_back(Entity value) {
         Node *current_node = this->tail;
 
         this->tail = new Node();
@@ -60,7 +62,7 @@ public:
         this->size++;
     }
 
-    void push_start(int value) {
+    void push_start(Entity value) {
         Node *current_node = this->head;
 
         this->head = new Node();
@@ -69,18 +71,18 @@ public:
         this->size++;
     }
 
-    int get_first() {
+    Entity get_first() {
         return this->head->value;
     }
 
-    int get_last() {
+    Entity get_last() {
         return this->tail->value;
     }
 
-    int pop_first() {
+    Entity pop_first() {
         if (this->size > 0) {
             Node *first_node = this->head;
-            int first_value = first_node->value;
+            Entity first_value = first_node->value;
 
             this->head = this->head->next_node;
             this->size--;
@@ -92,10 +94,10 @@ public:
         throw out_of_range("List is empty");
     }
 
-    int pop_last() {
+    Entity pop_last() {
         if (this->size > 0) {
             Node *last_node = this->tail;
-            int last_value = last_node->value;
+            Entity last_value = last_node->value;
 
             this->tail = get_node_by_index(this->size - 2);
             this->tail->next_node = nullptr;
@@ -108,7 +110,7 @@ public:
         throw out_of_range("List is empty");
     }
 
-    int operator[](int index) {
+    Entity operator[](int index) {
         Node *target_node = get_node_by_index(index);
 
         return target_node->value;
@@ -118,13 +120,13 @@ public:
         return this->size;
     }
 
-    int find_min() {
+    Entity find_min() {
         if (this->size == 0) {
             throw out_of_range("List is empty");
         }
 
         Node *current_node = this->head;
-        int min_element = current_node->value;
+        Entity min_element = current_node->value;
 
         current_node = current_node->next_node;
 
@@ -161,17 +163,17 @@ public:
 };
 
 class Stack {
-    List *data = nullptr;
+    List<int> *data = nullptr;
 
 public:
 
     Stack() {
-        this->data = new List();
+        this->data = new List<int>();
     }
 
     void add(int value) {
         if (this->data == nullptr) {
-            this->data = new List();
+            this->data = new List<int>();
         }
 
         this->data->push_start(value);
@@ -236,33 +238,42 @@ public:
 
 int main() {
     Stack stack;
-    List results;
     int n;
+    pair<int, int> input_data[n] = {make_pair(0, 0)};
+    int results[n];
+    int result_ind = 0;
 
     cin >> n;
 
     for (int i = 0; i < n; i++) {
-        int cmd;
+        cin >> input_data[i].first;
 
-        cin >> cmd;
+        if (input_data[i].first == 1) {
+            cin >> input_data[i].second;
+        }
+    }
 
-        if (cmd == 1) {
+    for (int i = 0; i < n; i++) {
+        pair<int, int> cmd = input_data[i];
+
+        if (cmd.first == 1) {
             int value;
 
-            cin >> value;
-            stack.add(value);
+            stack.add(cmd.second);
         }
-        else if (cmd == 2) {
+        else if (cmd.first == 2) {
             stack.pop();
         }
         else {
             int min_value = stack.find_min();
 
-            results.push_back(min_value);
+            results[result_ind++] = min_value;
         }
     }
 
-    results.print();
+    for (int i = 0; i < result_ind; i++) {
+        cout << results[i] << endl;
+    }
 
     return 0;
 }
