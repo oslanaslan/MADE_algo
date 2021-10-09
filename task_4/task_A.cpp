@@ -1,101 +1,99 @@
-#include <iostream>
-#include <utility>
 #include <cstdio>
-#include <inttypes.h>
-
+ 
 using namespace std;
-
-template<class Entity>
+ 
 class Stack {
     struct Node
     {
-        Entity value;
+        int value;
+        int min_value;
         Node *next_node = nullptr;
     };
     
     Node *head = nullptr;
-
+ 
 public:
-
+ 
     Stack() {}
-
-    void push(Entity value) {
+ 
+    void push(int value, int current_min) {
         if (this->head == nullptr) {
             this->head = new Node();
             this->head->value = value;
+            this->head->min_value = current_min;
         }
         else {
             Node *new_node = new Node();
-
+ 
             new_node->next_node = this->head;
             new_node->value = value;
+            new_node->min_value = current_min;
             this->head = new_node;
         }
     }
-
-    Entity pop() {
-        Entity value = this->head->value;
+ 
+    void pop() {
+        int value = this->head->value;
         Node *next_node = this->head->next_node;
-        // delete this->head;
+        delete this->head;
         this->head = next_node;
-
-        return value;
     }
-
-    Entity top() {
-        return this->head->value;
+ 
+    int top_min() {
+        return this->head->min_value;
     }
-
+ 
     bool is_empty() {
         return this->head == nullptr ? true : false;
     }
-
-    // ~Stack() {
-    //     Node *current_node = this->head;
-    //     Node *next_node;
-
-    //     while (current_node != nullptr) {
-    //         next_node = current_node->next_node;
-    //         // delete current_node;
-    //         current_node = next_node;
-    //     }
-    // }
+ 
+    ~Stack() {
+        Node *current_node = this->head;
+        Node *next_node;
+ 
+        while (current_node != nullptr) {
+            next_node = current_node->next_node;
+            delete current_node;
+            current_node = next_node;
+        }
+    }
 };
-
+ 
 int main() {
-    Stack<pair<int64_t, int64_t>> stack;
+    Stack stack;
     int n;
     int result_ind = 0;
-
+ 
     scanf("%d\n", &n);
-
-    int64_t results[n];
-
+ 
+    int *results = new int[n];
+ 
     for (int i = 0; i < n; i++) {
         int cmd;
-
+ 
         scanf("%d", &cmd);
-
+ 
         if (cmd == 1) {
-            int64_t value;
-
-            scanf(" %" SCNd64 "\n", &value);
-
-            int64_t current_min = stack.is_empty() ? value : stack.top().second;
+            int value;
+            int current_min;
+ 
+            scanf(" %d\n", &value);
+ 
+            current_min = stack.is_empty() ? value : stack.top_min();
             current_min = current_min < value ? current_min : value;
-            stack.push(make_pair(value, current_min));
+            stack.push(value, current_min);
         }
         else if (cmd == 2) {
             stack.pop();
         }
         else {
-            results[result_ind++] = stack.top().second;
+            results[result_ind++] = stack.top_min();
         }
     }
-
+ 
     for (int i = 0; i < result_ind; i++) {
-        printf("%" SCNd64 "\n", results[i]);
+        printf("%d\n", results[i]);
     }
-
+ 
     return 0;
 }
