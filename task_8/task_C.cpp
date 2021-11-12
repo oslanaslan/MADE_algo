@@ -35,13 +35,12 @@ class Tree {
 
     Node* head;
 
-    void delete_node(Node* node) {
-        if (!node) {
-            return;
+    void delete_subtree(Node* current_node) {
+        if (current_node) {
+            this->delete_subtree(current_node->left);
+            this->delete_subtree(current_node->right);
+            delete current_node;
         }
-        delete_node(node->left);
-        delete_node(node->right);
-        delete node;
     }
 
     Node* find_max(Node* current_node) {
@@ -303,7 +302,7 @@ public:
     }
 
     ~Tree() {
-        delete_node(this->head);
+        this->delete_subtree(this->head);
     }
 };
 

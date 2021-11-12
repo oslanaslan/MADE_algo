@@ -26,15 +26,6 @@ class Tree {
 
     Node* head;
 
-    void delete_node(Node* node) {
-        if (!node) {
-            return;
-        }
-        delete_node(node->left);
-        delete_node(node->right);
-        delete node;
-    }
-
     Node* find_max(Node* current_node) {
         while (current_node->right) {
             current_node = current_node->right;
@@ -80,25 +71,25 @@ class Tree {
             current_node->right = delete_node(current_node->right, key);
         }
         if (current_node->key == key) {
-            if (!current_node->right && !current_node->left) {
-                delete current_node;
-                current_node = nullptr;
+            if (current_node->right && current_node->left) {
+                current_node->key = this->find_max(current_node->left)->key;
+                current_node->left = this->delete_node(current_node->left, current_node->key);
             }
-            else if (current_node->left && !current_node->right) {
+            else if (current_node->left) {
                 Node* temp = current_node->left;
 
                 delete current_node;
                 current_node = temp;
             }
-            else if (current_node->right && !current_node->left) {
+            else if (current_node->right) {
                 Node* temp = current_node->right;
 
                 delete current_node;
                 current_node = temp;
             }
             else {
-                current_node->key = this->find_max(current_node->left)->key;
-                current_node->left = this->delete_node(current_node->left, current_node->key);
+                delete current_node;
+                current_node = nullptr;
             }
         }
 
@@ -152,6 +143,14 @@ class Tree {
         }
     }
 
+    void delete_subtree(Node* current_node) {
+        if (current_node) {
+            this->delete_subtree(current_node->left);
+            this->delete_subtree(current_node->right);
+            delete current_node;
+        }
+    }
+
 public:
 
     Tree() {
@@ -190,7 +189,7 @@ public:
     }
 
     ~Tree() {
-        delete_node(this->head);
+        this->delete_subtree(this->head);
     }
 };
 
@@ -215,8 +214,6 @@ int main() {
         else if (cmd == "prev") {
             cout << tree.prev(key) << endl;
         }
-
-        // tree.print_tree();
     }
 
     return 0;
