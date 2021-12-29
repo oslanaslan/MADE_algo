@@ -6,6 +6,8 @@ Lexicographical Parser Module
 from typing import Any
 
 
+END_CHAR = '.'
+
 class Token:
     """
     Token class
@@ -71,17 +73,58 @@ class Lexer:
         """Parser init"""
         self.token_lst = []
         self.input_str = input_str
+        self.iter = 0
         self.parse()
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Get token_lst len"""
         return len(self.token_lst)
 
-    def __iter__(self):
+    def __iter__(self) -> Token:
         """Iteration through token_lst"""
         for token in self.token_lst:
             yield token
 
-    def parse(self):
+    def current_token(self) -> str:
+        return self.input_str[self.iter]
+
+    def next_token(self) -> str:
+        self.iter += 1
+        return self.input_str[self.iter - 1]
+
+    def parse_digits_(self) -> None:
+        '''Parse digit tokens'''
+        token = Token('int', '')
+        while self.current_token().isdigit():
+            token.value += self.next_token()
+        self.token_lst.append(token)
+
+    def parse(self) -> None:
         """Parse self.input_str"""
-        pass
+        while self.current_token() != END_CHAR:
+            if self.current_token() == '(':
+                self.token_lst.append(Token('right_scope', self.next_token()))
+            elif self.current_token() == ')':
+                self.token_lst.append(Token('left_scope', self.next_token()))
+            elif self.current_token() == '+':
+                self.token_lst.append(Token('add', self.next_token()))
+            elif self.current_token() == '-':
+                self.token_lst.append(Token('sub', self.next_token()))
+            elif self.current_token() == '*':
+                self.token_lst.append(Token('mul', self.next_token()))
+            else:
+                self.parse_digits_()
+
+    def print_tokens(self) -> None:
+        for token in self.token_lst:
+            print(token.value)
+
+
+def main() -> None:
+    input_str = input()
+    lexer = Lexer(input_str)
+    lexer.print_tokens()
+
+
+if __name__ == '__main__':
+    main()
