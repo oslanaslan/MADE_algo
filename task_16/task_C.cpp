@@ -5,11 +5,10 @@
 // На codeforces ловил ошибку компиляции, когда пытался достать M_PI из cmath
 // Хотя локально работало. Поэтому задефайнил константу из документации к cmath
 // # define M_PI           3.14159265358979323846  /* pi */
-# define M_PI          3.141592653589793238462643383279502884L /* pi */
+#define M_PI 3.141592653589793238462643383279502884L /* pi */
+#define EPS 1e-5
 
 using namespace std;
-
-const double EPS = 1e-9;
 
 class Point {
     double x;
@@ -55,25 +54,29 @@ public:
         res.y = this->y / scalar;
         return res;
     }
+
+    bool operator==(const Point other) const {
+        if (this->x == other.x && this->y == other.y) {
+            return true;
+        }
+        return false;
+    }
 };
 
 class Vector {
     Point a;
     Point b;
-    double EPS;
 
 public:
 
-    Vector(double EPS = 1e-9) {
+    Vector() {
         this->a = Point();
         this->b = Point();
-        this->EPS = EPS;
     }
 
-    Vector(Point a, Point b, double EPS = 1e-9) {
+    Vector(Point a, Point b) {
         this->a = a;
         this->b = b;
-        this->EPS = EPS;
     }
 
     Vector operator+(Vector& other) {
@@ -118,15 +121,23 @@ public:
         return angle;
     }
 
-    bool lies_on_vector(Point& a) {
+    bool lies_on_vector(Point a) {
         Point b = this->a;
         Point c = this->b;
-        Vector ab(a, b);
-        Vector ac(a, c);
-        double cross_prod = ab.cross_product(ac);
-        double dot_prod = ab.dot_product(ac);
 
-        if (abs(cross_prod) < EPS && dot_prod <= 0) {
+        if (a == b || a == c) {
+            return true;
+        }
+
+        Vector ba(b, a);
+        Vector ca(c, a);
+        Vector bc(b, c);
+        double cross_prod_1 = ba.cross_product(bc);
+        double cross_prod_2 = ca.cross_product(bc);
+        double dot_prod_1 = ba.dot_product(bc);
+        double dot_prod_2 = ca.dot_product(bc);
+
+        if (abs(cross_prod_1) < EPS && abs(cross_prod_2) < EPS && dot_prod_1 > 0 && dot_prod_2 < 0) {
             return true;
         }
 
@@ -151,7 +162,7 @@ int main() {
         Vector ab(target_point, first_point);
         Vector ac(target_point, second_point);
         Vector bc(first_point, second_point);
-        angle += ab.get_angle(ac);
+        angle += ac.get_angle(ab);
 
         if (bc.lies_on_vector(target_point)) {
             cout << "YES" << endl;
@@ -169,8 +180,8 @@ int main() {
         cout << "YES" << endl;
     }
     else {
-        angle += ab.get_angle(ac);
-        bool res = abs(angle - 2 * M_PI) < EPS;
+        angle += ac.get_angle(ab);
+        bool res = abs(abs(angle) - 2 * M_PI) < EPS;
 
         cout << (res ? "YES" : "NO") << endl;
     }
